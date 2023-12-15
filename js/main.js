@@ -198,39 +198,48 @@ function addPipes() {
     pipeArray.push(newBPipe);
 }
 
-let shush = new topPipe();
+function detectCollision(pipe) {
+    //a is flappy bird b is pipe
+    return (
+        x <= pipe.x + pipe.w && //a's top left corner doesn't reach b's top right corner
+        x + bird.w >= pipe.x && //a's top right corner passes b's top left corner
+        y <= pipe.y + pipe.h && //a's top left corner doesn't reach b's bottom left corner
+        y + bird.h >= pipe.y
+    ); //a's bottom left corner passes b's top left corner
+}
 
 function loop() {
+    if (gameOver) {
+        return;
+    }
+
     ctx.clearRect(0, 0, cvs.width, cvs.height);
     bg.draw();
     fg.draw();
-    // shush.draw();
 
-    // let shush = new topPipe();
-    // shush.draw();
-    // topPipe.draw();
-    // bottomPipe.draw();
-
-    //bird
+    //bird mechanics
     velocityY += gravity;
-    // bird.y += velocityY;
     y = Math.max(y + velocityY, 0);
-
     bird.draw(x, y);
+
+    if (y > cvs.height) {
+        gameOver = true;
+    }
 
     for (let i = 0; i < pipeArray.length; i++) {
         let pipe = pipeArray[i];
         pipe.x += velocityX;
         pipe.draw(pipe.x);
+
+        if (detectCollision(pipe)) {
+            gameOver = true;
+        }
     }
 
     requestAnimationFrame(loop);
     // ctx.clearRect(0, 0, cvs.width, cvs.height);
 }
 
-setInterval(function () {
-    console.log(pipeArray.length);
-}, 1000);
 requestAnimationFrame(loop);
 
 // //board variables
