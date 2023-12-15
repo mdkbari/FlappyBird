@@ -155,6 +155,19 @@ class bottomPipe {
     }
 }
 
+const score = {
+    value: 0,
+
+    draw() {
+        ctx.fillStyle = "#FFF";
+        ctx.strokeStyle = "#000";
+        ctx.lineWidth = 2;
+        ctx.font = "35px Teko";
+        ctx.fillText(this.value, cvs.width / 2, 50);
+        ctx.strokeText(this.value, cvs.width / 2, 50);
+    },
+};
+
 // /*----- state variables -----*/
 
 let velocityX = -2; //pipes moving left speed
@@ -177,8 +190,6 @@ setInterval(addPipes, 1500);
 
 function moveBird(e) {
     if (e.code == "Space") {
-        // console.log("move me move");
-        // console.log(e.code);
         velocityY -= 6;
         gravity = 0.4;
     }
@@ -201,11 +212,11 @@ function addPipes() {
 function detectCollision(pipe) {
     //a is flappy bird b is pipe
     return (
-        x <= pipe.x + pipe.w && //a's top left corner doesn't reach b's top right corner
-        x + bird.w >= pipe.x && //a's top right corner passes b's top left corner
-        y <= pipe.y + pipe.h && //a's top left corner doesn't reach b's bottom left corner
-        y + bird.h >= pipe.y
-    ); //a's bottom left corner passes b's top left corner
+        x < pipe.x + pipe.w &&
+        x + bird.w > pipe.x &&
+        y < pipe.y + pipe.h &&
+        y + bird.h > pipe.y
+    );
 }
 
 function loop() {
@@ -216,6 +227,8 @@ function loop() {
     ctx.clearRect(0, 0, cvs.width, cvs.height);
     bg.draw();
     fg.draw();
+
+    score.draw();
 
     //bird mechanics
     velocityY += gravity;
@@ -234,47 +247,14 @@ function loop() {
         if (detectCollision(pipe)) {
             gameOver = true;
         }
+
+        if (!pipe.passed && x > pipe.x + pipe.w) {
+            score.value += 0.5;
+            pipe.passed = true;
+        }
     }
 
     requestAnimationFrame(loop);
-    // ctx.clearRect(0, 0, cvs.width, cvs.height);
 }
 
 requestAnimationFrame(loop);
-
-// //board variables
-
-// //bird hitbox variables
-
-// //physic variables
-
-// window.addEventListener(
-//     "load",
-//     () => {
-//         let board;
-//         board = document.getElementById("game-background");
-//         let context;
-
-//         context = board.getContext("2d"); //used for drawing on the board
-//     },
-//     false
-// );
-
-// //pipe array --> for random pipes
-
-// //score
-
-// //collision (gameOver)
-
-// /*----- event listeners -----*/
-// //space bar to listen to jump button
-
-// // initialise() //--> initialise game state
-
-// //renderPipes() // --> pipe functionality
-
-// //move() // --> bird functionality
-
-// // checkCollision() // --> check collion with pipes
-
-// //run() //--> main game functionality here
