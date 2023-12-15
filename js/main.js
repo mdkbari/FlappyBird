@@ -1,16 +1,13 @@
-// /*----- constants -----*/
+// /*----- HTML elements -----*/
 
-//canvas and context variables
 const cvs = document.getElementById("screen");
 const ctx = cvs.getContext("2d");
 
 var sprite = new Image();
 sprite.src = "imgs/fbsprite.png"; //why is "../" not needed here?
 
+// /*----- constants -----*/
 const bg = {
-    // draw: function () {
-    //     ctx.drawImage(sprite, 0, 0, 360, 640, 0, 0, 360, 640);
-    // },
     sX: 0,
     sY: 0,
     w: 275,
@@ -52,8 +49,6 @@ const fg = {
     x: 0,
     y: cvs.height - 112,
 
-    dx: 2,
-
     draw() {
         ctx.drawImage(
             sprite,
@@ -87,32 +82,89 @@ const fg = {
     },
 };
 
-function loop() {
-    bg.draw();
-    fg.draw();
+const bird = {
+    sX: 276,
+    sY: 112,
+    w: 34,
+    h: 26,
+
+    draw(x, y) {
+        ctx.drawImage(
+            sprite,
+            this.sX,
+            this.sY,
+            this.w,
+            this.h,
+            x,
+            y,
+            this.w,
+            this.h
+        );
+    },
+
+    // update(velocityY, gravity) {
+    //     velocityY += gravity;
+    //     bird.y = Math.max(bird.y + velocityY, 0);
+    //     ctx.drawImage(
+    //         sprite,
+    //         this.sX,
+    //         this.sY,
+    //         this.w,
+    //         this.h,
+    //         this.x,
+    //         this.y,
+    //         this.w,
+    //         this.h
+    //     );
+    // },
+};
+
+// /*----- state variables -----*/
+
+let velocityX = -2; //pipes moving left speed
+let velocityY = 0; //bird jump speed
+let gravity = 0;
+
+let x = cvs.width / 8;
+let y = cvs.height / 2;
+let gameStarted = false;
+
+// /*----- event listeners -----*/
+document.addEventListener("keydown", moveBird);
+
+// /*----- functions -----*/
+
+function moveBird(e) {
+    if (e.code == "Space") {
+        // console.log("move me move");
+        // console.log(e.code);
+        velocityY -= 6;
+        gravity = 0.4;
+    }
 }
 
-134;
-195;
-211;
+function loop() {
+    ctx.clearRect(0, 0, cvs.width, cvs.height);
+    bg.draw();
+    fg.draw();
+
+    //bird
+    velocityY += gravity;
+    // bird.y += velocityY;
+    y = Math.max(y + velocityY, 0);
+
+    bird.draw(x, y);
+    requestAnimationFrame(loop);
+    // ctx.clearRect(0, 0, cvs.width, cvs.height);
+}
 
 requestAnimationFrame(loop);
-
-setTimeout(() => {}, 300);
 
 // //board variables
 
 // //bird hitbox variables
 
 // //physic variables
-
-// let boardWidth = 340;
-// let boardHeight = 640;
-
-// let birdWidth = 34;
-// let birdHeight = 24;
-
-// // console.log("heyyyyyyy");
 
 // window.addEventListener(
 //     "load",
@@ -126,22 +178,6 @@ setTimeout(() => {}, 300);
 //     false
 // );
 
-// // var birdImg = document.getElementById("bird-sprite");
-
-// // birdImg.onload = function () {
-// //     context.drawImage(
-// //         birdImg,
-// //         boardWidth / 8,
-// //         boardHeight / 2,
-// //         birdWidth,
-// //         birdHeight
-// //     );
-// // };
-
-// /*----- HTML elements -----*/
-
-// /*----- state variables -----*/
-
 // //pipe array --> for random pipes
 
 // //score
@@ -151,7 +187,6 @@ setTimeout(() => {}, 300);
 // /*----- event listeners -----*/
 // //space bar to listen to jump button
 
-// /*----- functions -----*/
 // // initialise() //--> initialise game state
 
 // //renderPipes() // --> pipe functionality
