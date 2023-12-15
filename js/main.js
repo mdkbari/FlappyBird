@@ -101,36 +101,77 @@ const bird = {
             this.h
         );
     },
-
-    // update(velocityY, gravity) {
-    //     velocityY += gravity;
-    //     bird.y = Math.max(bird.y + velocityY, 0);
-    //     ctx.drawImage(
-    //         sprite,
-    //         this.sX,
-    //         this.sY,
-    //         this.w,
-    //         this.h,
-    //         this.x,
-    //         this.y,
-    //         this.w,
-    //         this.h
-    //     );
-    // },
 };
+
+class topPipe {
+    constructor(value) {
+        (this.sX = 554),
+            (this.sY = 0),
+            (this.w = 54),
+            (this.h = 400),
+            (this.x = cvs.width),
+            (this.y = value),
+            (this.passed = false);
+    }
+
+    draw() {
+        ctx.drawImage(
+            sprite,
+            this.sX,
+            this.sY,
+            this.w,
+            this.h,
+            this.x,
+            this.y,
+            this.w,
+            this.h
+        );
+    }
+}
+
+class bottomPipe {
+    constructor(value) {
+        (this.sX = 500),
+            (this.sY = 0),
+            (this.w = 54),
+            (this.h = 400),
+            (this.x = cvs.width),
+            (this.y = value),
+            (this.passed = false);
+    }
+
+    draw() {
+        ctx.drawImage(
+            sprite,
+            this.sX,
+            this.sY,
+            this.w,
+            this.h,
+            this.x,
+            this.y,
+            this.w,
+            this.h
+        );
+    }
+}
 
 // /*----- state variables -----*/
 
 let velocityX = -2; //pipes moving left speed
 let velocityY = 0; //bird jump speed
 let gravity = 0;
-
 let x = cvs.width / 8;
 let y = cvs.height / 2;
-let gameStarted = false;
+let gameOver = false;
+
+//pipes
+let pipeArray = [];
+let pipeX = cvs.width;
+let pipeY = 0;
 
 // /*----- event listeners -----*/
 document.addEventListener("keydown", moveBird);
+setInterval(addPipes, 1500);
 
 // /*----- functions -----*/
 
@@ -143,10 +184,32 @@ function moveBird(e) {
     }
 }
 
+function addPipes() {
+    if (gameOver) {
+        return;
+    }
+
+    let randomY = 0 - 400 / 4 - Math.random() * (400 / 2);
+    let opening = cvs.height / 4;
+
+    const newTPipe = new topPipe(randomY);
+    const newBPipe = new bottomPipe(randomY + 400 + opening);
+    pipeArray.push(newTPipe);
+    pipeArray.push(newBPipe);
+}
+
+let shush = new topPipe();
+
 function loop() {
     ctx.clearRect(0, 0, cvs.width, cvs.height);
     bg.draw();
     fg.draw();
+    // shush.draw();
+
+    // let shush = new topPipe();
+    // shush.draw();
+    // topPipe.draw();
+    // bottomPipe.draw();
 
     //bird
     velocityY += gravity;
@@ -154,10 +217,20 @@ function loop() {
     y = Math.max(y + velocityY, 0);
 
     bird.draw(x, y);
+
+    for (let i = 0; i < pipeArray.length; i++) {
+        let pipe = pipeArray[i];
+        pipe.x += velocityX;
+        pipe.draw(pipe.x);
+    }
+
     requestAnimationFrame(loop);
     // ctx.clearRect(0, 0, cvs.width, cvs.height);
 }
 
+setInterval(function () {
+    console.log(pipeArray.length);
+}, 1000);
 requestAnimationFrame(loop);
 
 // //board variables
