@@ -1,0 +1,4 @@
+
+
+
+was having issues with getContext() function in js because element was not canvas
