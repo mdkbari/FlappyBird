@@ -227,7 +227,6 @@ function loop() {
     ctx.clearRect(0, 0, cvs.width, cvs.height);
     bg.draw();
     fg.draw();
-
     score.draw();
 
     //bird mechanics
