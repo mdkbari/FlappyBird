@@ -168,6 +168,52 @@ const score = {
     },
 };
 
+const gameOver = {
+    sX: 175,
+    sY: 228,
+    w: 225,
+    h: 40,
+    x: cvs.width / 2 - 225 / 2,
+    y: 200,
+
+    draw() {
+        ctx.drawImage(
+            sprite,
+            this.sX,
+            this.sY,
+            this.w,
+            this.h,
+            this.x,
+            this.y,
+            this.w,
+            this.h
+        );
+    },
+};
+
+const restart = {
+    sX: 175,
+    sY: 400,
+    w: 225,
+    h: 50,
+    x: cvs.width / 2 - 225 / 2,
+    y: 260,
+
+    draw() {
+        ctx.drawImage(
+            sprite,
+            this.sX,
+            this.sY,
+            this.w,
+            this.h,
+            this.x,
+            this.y,
+            this.w,
+            this.h
+        );
+    },
+};
+
 // /*----- state variables -----*/
 
 let velocityX = -2; //pipes moving left speed
@@ -175,7 +221,7 @@ let velocityY = 0; //bird jump speed
 let gravity = 0;
 let x = cvs.width / 8;
 let y = cvs.height / 2;
-let gameOver = false;
+let collided = false;
 
 //pipes
 let pipeArray = [];
@@ -184,6 +230,7 @@ let pipeY = 0;
 
 // /*----- event listeners -----*/
 document.addEventListener("keydown", moveBird);
+document.addEventListener("click", reloadWepPage);
 setInterval(addPipes, 1500);
 
 // /*----- functions -----*/
@@ -195,8 +242,30 @@ function moveBird(e) {
     }
 }
 
+function reloadWepPage(e) {
+    const coord = cvs.getBoundingClientRect();
+
+    const x_start = coord.left + restart.x + 72.5;
+    const y_start = coord.top + restart.y + 3.5;
+
+    //these numbers (72.5, and 3.5 are arbitrary numbers to
+    //get the coordinates of start box which is estimated to be around (492, 332))
+    //find a way to calculate this without arbitrary numbers
+
+    //this is buggy
+    if (
+        e.clientX >= x_start &&
+        e.clientX <= x_start + restart.w &&
+        e.clientY >= y_start &&
+        e.clientY <= y_start + restart.h
+    ) {
+        console.log("hiiiiiii");
+        window.location.reload();
+    }
+}
+
 function addPipes() {
-    if (gameOver) {
+    if (collided) {
         return;
     }
 
@@ -219,8 +288,15 @@ function detectCollision(pipe) {
     );
 }
 
+function endOfGame() {
+    gameOver.draw();
+    restart.draw();
+    return;
+}
+
 function loop() {
-    if (gameOver) {
+    if (collided) {
+        endOfGame();
         return;
     }
 
@@ -235,7 +311,7 @@ function loop() {
     bird.draw(x, y);
 
     if (y > cvs.height) {
-        gameOver = true;
+        collided = true;
     }
 
     for (let i = 0; i < pipeArray.length; i++) {
@@ -244,7 +320,7 @@ function loop() {
         pipe.draw(pipe.x);
 
         if (detectCollision(pipe)) {
-            gameOver = true;
+            collided = true;
         }
 
         if (!pipe.passed && x > pipe.x + pipe.w) {
