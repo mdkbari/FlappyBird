@@ -9,7 +9,7 @@ Technologies used included; JavaScript, HTML, CSS
 Getting Started:
 
 -   Use the space key to move the bird
--   Click the following link to start playing -->
+-   Click the following link to start playing --> https://mdkbari.github.io/FlappyBird/
 
 Next Steps:
 
